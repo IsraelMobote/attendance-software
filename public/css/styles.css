@@ -1,0 +1,66 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#header {
+    height: 6rem;
+    font-size: 3rem;
+    font-weight: 600;
+    text-align: center;
+    background-color: rgb(24, 24, 158);
+    color: white;
+    align-content: center;
+}
+
+#header>span {
+    margin: 1rem auto;
+}
+
+#registerParticipant {
+    width: 25%;
+    margin: 1%;
+    background-color: rgba(198, 226, 198, 0.959);
+    border: 2px solid green;
+    border-radius: 15px;
+}
+
+ label,
+ button {
+    display: block;
+}
+
+label {
+    font-size: 1.2rem;
+    text-align: left;
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
+
+ input, select {
+    width: 80%;
+    margin-left: 1rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+#registerParticipant select {
+    color: black;
+}
+
+button {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 16px auto ;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: rgb(10, 87, 17);
+    color: white;
+    transition: background-color 1s, color 1s;
+}
+
+button:hover {
+    background-color: white;
+    color: rgb(10, 87, 17);
+    border: 2px solid rgb(10, 87, 17);
+}

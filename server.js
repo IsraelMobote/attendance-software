@@ -14,6 +14,7 @@ const expressLayouts = require("express-ejs-layouts")
 const bodyParser = require("body-parser")
 const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
+const participantRoute = require("./routes/participantRoute")
 
 // Express Messages Middleware
 app.use(require('connect-flash')())
@@ -38,6 +39,9 @@ app.use(static)
 
 // Index route
 app.get("/", baseController.buildHome)
+
+//Participant route
+//app.use("/participant", participantRoute)
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
