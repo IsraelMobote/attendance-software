@@ -4,4 +4,6 @@ const parController = require("../controllers/participantController")
 
 
 //route for the post method in the register participant form
-//router.post("/register", parController.registerParticipant());
+router.post("/register", parController.registerParticipant);
+
+module.exports = router

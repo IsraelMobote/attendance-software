@@ -1,16 +1,20 @@
+<%# code to enable express messages functionality %>
+<%- messages() %>
+
 <form id="registerParticipant" action="/participant/register" method="post">
   <label for="name">Full Name</label>
   <input type="text" id="name" name="par_name" required />
   <label for="number">Phone Number</label>
   <input type="tel" id="number" name="par_number" required />
   <label for="ward">Ward</label>
-  <select name="par_ward" id="ward">
+  <select name="par_ward" id="ward" required>
     <option value="" selected disabled>Select a Ward</option>
   </select>
   <label for="mrn">Membership Record Number</label>
-  <input type="text" id="mrn" name="par_mrn" />
+  <input type="text" id="mrn" name="par_mrn" required/>
   <label for="agegroup">Age Group</label>
-  <select name="par_agegroup" id="agegroup">
+  <select name="par_agegroup" id="agegroup" required>
+    <option value="" selected disabled>select an age-group</option>
     <option value="18-24">18-24</option>
     <option value="25-30">25-30</option>
     <option value="31-35">31-35</option>

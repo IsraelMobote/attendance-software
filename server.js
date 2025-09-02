@@ -15,14 +15,32 @@ const bodyParser = require("body-parser")
 const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const participantRoute = require("./routes/participantRoute")
+const pool = require("./database/")
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
+
+
+/* ***********************
+ * Middleware
+ * ************************/
+app.use(session({
+    store: new (require('connect-pg-simple')(session))({
+        createTableIfMissing: true,
+        pool,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    name: 'sessionId',
+}))
 
 // Express Messages Middleware
+app.use(cookieParser())
 app.use(require('connect-flash')())
 app.use(function (req, res, next) {
     res.locals.messages = require('express-messages')(req, res)
     next()
 })
-
 
 app.set("view engine", "ejs")
 app.use(expressLayouts)
@@ -41,7 +59,7 @@ app.use(static)
 app.get("/", baseController.buildHome)
 
 //Participant route
-//app.use("/participant", participantRoute)
+app.use("/participant", participantRoute)
 
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
