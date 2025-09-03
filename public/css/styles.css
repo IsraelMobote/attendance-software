@@ -17,7 +17,7 @@
     margin: 1rem auto;
 }
 
-.form {
+.green-form {
     width: 25%;
     margin: 1%;
     background-color: rgba(198, 226, 198, 0.959);
@@ -25,9 +25,50 @@
     border-radius: 15px;
 }
 
- label,
- button {
+
+.navy-form {
+    width: 40%;
+    margin: 1%;
+    background-color: rgba(184, 194, 221, 0.959);
+    border: 2px solid navy;
+    border-radius: 15px;
+}
+
+label,
+button {
     display: block;
+}
+
+#statusMessage {
+    display: none;
+    background-color: transparent;
+    color: black;
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 1rem auto 0;
+}
+
+#statusMessage:hover {
+    border: none;
+}
+
+.navy-form #markAttendance, .navy-form #submitTotal {
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: fit-content;
+    margin: 1.5rem auto 2rem;
+    padding: 8px;
+    color: white;
+    background-color: rgb(20, 20, 214);
+    border-radius: 8px;
+    transition: background-color 1s, color 1s;
+}
+
+
+.navy-form #markAttendance:hover, .navy-form #submitTotal:hover {
+    background-color: white;
+    color: rgb(20, 20, 214);
+    border: 2px solid rgb(20, 20, 214);
 }
 
 label {
@@ -37,7 +78,8 @@ label {
     margin-top: 1rem;
 }
 
- input, select {
+input,
+select {
     width: 80%;
     margin-left: 1rem;
     padding: 0.5rem;
@@ -48,10 +90,10 @@ label {
     color: black;
 }
 
-button {
+.green-form>button {
     font-size: 1.2rem;
     font-weight: 700;
-    margin: 16px auto ;
+    margin: 16px auto;
     padding: 8px;
     border-radius: 4px;
     background-color: rgb(10, 87, 17);
@@ -59,8 +101,26 @@ button {
     transition: background-color 1s, color 1s;
 }
 
-button:hover {
+.green-form>button:hover {
     background-color: white;
     color: rgb(10, 87, 17);
     border: 2px solid rgb(10, 87, 17);
+}
+
+
+.navy-form>button {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 16px auto;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: navy;
+    color: white;
+    transition: background-color 1s, color 1s;
+}
+
+.navy-form>button:hover {
+    background-color: white;
+    color: navy;
+    border: 2px solid navy;
 }

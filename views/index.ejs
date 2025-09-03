@@ -1,24 +1,35 @@
 <%# code to enable express messages functionality %> <%- messages() %>
 
-<form id="attendanceForm" class="form" action="/participant/attendance" method>
+<form
+  id="attendanceForm"
+  class="navy-form"
+  action="/participant/attendance"
+  method
+>
   <label for="nameList">choose an event</label>
   <select name="par_event" id="event" required>
     <option value="" selected disabled>select an event</option>
-    <option value="makeup">skill-acquisition-makeup</option>
-    <option value="digitalmarketing">skill-acquisition-digitalmarketing</option>
-    <option value="graphicdesign">skill-acquisition-graphicdesign</option>
-    <option value="courseone">institute-courseOne</option>
-    <option value="coursetwo">institute-courseTwo</option>
+    <option value="skillAcquisition">SA-makeup</option>
+    <option value="skillAcquisition">SA-digitalmarketing</option>
+    <option value="skillAcquisition">SA-graphicdesign</option>
+    <option value="skillAcquisition">SA-photography</option>
+    <option value="institute">IN-courseOne</option>
+    <option value="institute">IN-courseTwo</option>
     <option value="family-history-and-temple">family-history-and-temple</option>
   </select>
 
   <label for="nameInput">select your name</label>
   <input type="text" list="par_names" id="nameInput" required />
   <datalist id="par_names"></datalist>
+
+  <p id="statusMessage"></p>
+  <p id="markAttendance">Mark Attendance</p>
+  <p id="submitTotal">Submit Total</p>
+  <div id="participantDisplay"></div>
 </form>
 <form
   id="registerParticipant"
-  class="form"
+  class="green-form"
   action="/participant/register"
   method="post"
 >
