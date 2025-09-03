@@ -33,4 +33,14 @@ async function registerParticipant(req, res) {
     }
 }
 
-module.exports = { registerParticipant }
+async function getNames(req, res) {
+    const participantNames = await participantModel.getNames()
+    console.log(participantNames)
+    if (participantNames) {
+        return res.json(participantNames)
+    } else {
+        next(new Error("No data returned"))
+    }
+}
+
+module.exports = { registerParticipant, getNames }

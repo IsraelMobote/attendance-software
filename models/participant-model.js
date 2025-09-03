@@ -14,5 +14,19 @@ async function registerParticipant(par_name, par_ward, par_mrn, par_agegroup, pa
     }
 }
 
-module.exports = { registerParticipant };
+/* *****************************
+*   get participant names
+* *************************** */
+async function getNames() {
+    try {
+        const sql = `SELECT par_name FROM participant`
+        const data = await pool.query(sql)
+    
+        return data.rows
+    } catch (error) {
+        console.error("getNames error " + error)
+    }
+}
+
+module.exports = { registerParticipant, getNames };
 

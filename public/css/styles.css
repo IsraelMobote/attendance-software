@@ -17,7 +17,7 @@
     margin: 1rem auto;
 }
 
-#registerParticipant {
+.form {
     width: 25%;
     margin: 1%;
     background-color: rgba(198, 226, 198, 0.959);

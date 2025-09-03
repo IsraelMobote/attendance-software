@@ -1,7 +1,27 @@
-<%# code to enable express messages functionality %>
-<%- messages() %>
+<%# code to enable express messages functionality %> <%- messages() %>
 
-<form id="registerParticipant" action="/participant/register" method="post">
+<form id="attendanceForm" class="form" action="/participant/attendance" method>
+  <label for="nameList">choose an event</label>
+  <select name="par_event" id="event" required>
+    <option value="" selected disabled>select an event</option>
+    <option value="makeup">skill-acquisition-makeup</option>
+    <option value="digitalmarketing">skill-acquisition-digitalmarketing</option>
+    <option value="graphicdesign">skill-acquisition-graphicdesign</option>
+    <option value="courseone">institute-courseOne</option>
+    <option value="coursetwo">institute-courseTwo</option>
+    <option value="family-history-and-temple">family-history-and-temple</option>
+  </select>
+
+  <label for="nameInput">select your name</label>
+  <input type="text" list="par_names" id="nameInput" required />
+  <datalist id="par_names"></datalist>
+</form>
+<form
+  id="registerParticipant"
+  class="form"
+  action="/participant/register"
+  method="post"
+>
   <label for="name">Full Name</label>
   <input type="text" id="name" name="par_name" required />
   <label for="number">Phone Number</label>
@@ -11,7 +31,7 @@
     <option value="" selected disabled>Select a Ward</option>
   </select>
   <label for="mrn">Membership Record Number</label>
-  <input type="text" id="mrn" name="par_mrn" required/>
+  <input type="text" id="mrn" name="par_mrn" required />
   <label for="agegroup">Age Group</label>
   <select name="par_agegroup" id="agegroup" required>
     <option value="" selected disabled>select an age-group</option>
