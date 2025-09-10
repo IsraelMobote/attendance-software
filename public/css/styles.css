@@ -236,3 +236,47 @@ select {
     background-color: navy;
     color: white;
 }
+
+#analyticsDiv {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.attendanceTotalDiv {
+    width: 100%;
+    margin: 1rem auto;
+}
+
+#dataTable {
+    margin: 0;
+    width: 100%;
+}
+
+#dataTable tr {
+    display: flex;
+    justify-content: space-around;
+}
+
+#dataTable th,
+#dataTable td {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    word-break: break-word;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+#dataTable tr>th {
+    background-color: rgba(135, 207, 235, 0.637);
+    font-size: 1.1rem;
+}
+
+#dataTable tr>td:first-child {
+    font-size: 1.1rem;
+    font-weight: 600;
+    background-color: royalblue;
+    color: white;
+}

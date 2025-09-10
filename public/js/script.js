@@ -458,16 +458,17 @@ function showAttendanceTotal() {
     let url = 'participant/getAttendanceTotal'
 
     const attendanceTotalDiv = document.createElement('div')
+    attendanceTotalDiv.setAttribute('class', 'attendanceTotalDiv')
 
     select.addEventListener('input', () => {
         let url = `/participant/getAttendanceData/${select.value}`
 
         attendanceTotalDiv.innerHTML = ''
-        getAttendanceTotal(url, attendanceTotalDiv, analyticsDiv)
+        getAttendanceTotal(url, attendanceTotalDiv, analyticsDiv, select)
     })
 }
 
-function getAttendanceTotal(url, attendanceTotalDiv, parentDiv) {
+function getAttendanceTotal(url, attendanceTotalDiv, parentDiv, selectElement) {
     fetch(url)
         .then(function (response) {
             if (response.ok) {
@@ -483,14 +484,15 @@ function getAttendanceTotal(url, attendanceTotalDiv, parentDiv) {
                 });
             })
             console.log(dataList)
-            createDataTable(dataList)
+            createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
+
         })
         .catch(function (error) {
             console.log('There was a problem: ', error.message)
         })
 }
 
-function createDataTable(dataList) {
+function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv) {
     fetch("/participant/getNames/")
         .then(function (response) {
             if (response.ok) {
@@ -499,23 +501,58 @@ function createDataTable(dataList) {
             throw Error("Network response was not OK");
         })
         .then(function (data) {
-            console.log(data)
+
+            // this is the empty list that will contain the event for the table heading
             stringList = []
             dataList.forEach(element => {
                 let newString = element.att_list
                 data.forEach(item => {
                     newString = newString.replace(item.par_name, '')
+                    newString = newString.replace(/' '/g, '')
                 });
 
                 let newStringList = newString.split(',')
                 newStringList.forEach(item => {
+                    item = item.replace('-', '')
+                    item = item.trim()
                     if (!stringList.includes(item)) {
                         stringList.push(item)
                     }
                 });
             });
+            let table = '<table id=dataTable ><tr>'
+            table += '<th>' + 'Day' + '</th>'
+            stringList.forEach(element => {
+                table += '<th>' + element + '</th>'
+            });
+            table += '</tr>'
+            let number = 0
 
-            console.log(stringList)
+            dataList.forEach(data => {
+                number += 1
+                table += '<tr><td>' + `${selectElement.value} ${number}` + '</td>'
+                stringList.forEach(string => {
+                    let counter = 0
+                    dataList.forEach(dataItem => {
+                        if (dataItem.att_day == number) {
+                            const list = dataItem.att_list.split(',')
+                            list.forEach(item => {
+                                if (item.includes(string)) {
+                                    counter += 1
+                                }
+                            });
+                        }
+                    });
+                    table += '<td>' + counter + '</td>'
+                });
+                table += '</tr>'
+            })
+
+            table += '</table>'
+
+            console.log(table)
+            attendanceTotalDiv.insertAdjacentHTML("beforeend", table)
+            parentDiv.append(attendanceTotalDiv)
         })
         .catch(function (error) {
             console.log('There was a problem: ', error.message)
