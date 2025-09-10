@@ -1,57 +1,101 @@
 <%# code to enable express messages functionality %> <%- messages() %>
+<div id="formContainer">
+  <form
+    id="attendanceForm"
+    class="navy-form"
+    action="/participant/attendance"
+    method="post"
+  >
+    <h2>Mark Attendance</h2>
+    <label for="nameList">choose an event</label>
+    <select name="par_event" id="event" required>
+      <option value="" selected disabled>select an event</option>
+    </select>
 
-<form
-  id="attendanceForm"
-  class="navy-form"
-  action="/participant/attendance"
-  method
->
-  <label for="nameList">choose an event</label>
-  <select name="par_event" id="event" required>
-    <option value="" selected disabled>select an event</option>
-    <option value="skillAcquisition">SA-makeup</option>
-    <option value="skillAcquisition">SA-digitalmarketing</option>
-    <option value="skillAcquisition">SA-graphicdesign</option>
-    <option value="skillAcquisition">SA-photography</option>
-    <option value="institute">IN-courseOne</option>
-    <option value="institute">IN-courseTwo</option>
-    <option value="family-history-and-temple">family-history-and-temple</option>
-  </select>
+    <label for="nameInput">select your name</label>
+    <input type="text" list="par_names" id="nameInput" />
+    <div id="par_names"></div>
 
-  <label for="nameInput">select your name</label>
-  <input type="text" list="par_names" id="nameInput" required />
-  <datalist id="par_names"></datalist>
+    <p id="statusMessage"></p>
+    <p id="markAttendance">Mark Attendance</p>
+    <p id="showAttendanceList">show attendance list</p>
+    <p id="showAttendanceCaution">select an event to see attendance list</p>
 
-  <p id="statusMessage"></p>
-  <p id="markAttendance">Mark Attendance</p>
-  <p id="submitTotal">Submit Total</p>
-  <div id="participantDisplay"></div>
-</form>
-<form
-  id="registerParticipant"
-  class="green-form"
-  action="/participant/register"
-  method="post"
->
-  <label for="name">Full Name</label>
-  <input type="text" id="name" name="par_name" required />
-  <label for="number">Phone Number</label>
-  <input type="tel" id="number" name="par_number" required />
-  <label for="ward">Ward</label>
-  <select name="par_ward" id="ward" required>
-    <option value="" selected disabled>Select a Ward</option>
-  </select>
-  <label for="mrn">Membership Record Number</label>
-  <input type="text" id="mrn" name="par_mrn" required />
-  <label for="agegroup">Age Group</label>
-  <select name="par_agegroup" id="agegroup" required>
-    <option value="" selected disabled>select an age-group</option>
-    <option value="18-24">18-24</option>
-    <option value="25-30">25-30</option>
-    <option value="31-35">31-35</option>
-  </select>
+    <label for="master_password" id="master_password_label"
+      >enter master password</label
+    >
+    <input type="password" id="master_password" />
 
-  <button id="registerButton">Register</button>
-</form>
+    <div id="participantDisplay"></div>
+    <input type="text" name="att_list" id="att_list" hidden />
+    <p id="proceed_to_submit">proceed to submit</p>
+    <button id="submitAttendance">submit attendance</button>
+  </form>
+  <form
+    id="registerParticipant"
+    class="green-form"
+    action="/participant/register"
+    method="post"
+  >
+    <h2>Register Participant</h2>
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="par_name" required />
+    <label for="number">Phone Number</label>
+    <input type="tel" id="number" name="par_number" required />
+    <label for="ward">Ward</label>
+    <select name="par_ward" id="ward" required>
+      <option value="" selected disabled>Select a Ward</option>
+    </select>
+    <label for="mrn">Membership Record Number</label>
+    <input type="text" id="mrn" name="par_mrn" required />
+    <label for="agegroup">Age Group</label>
+    <select name="par_agegroup" id="agegroup" required>
+      <option value="" selected disabled>select an age-group</option>
+      <option value="18-24">18-24</option>
+      <option value="25-30">25-30</option>
+      <option value="31-35">31-35</option>
+    </select>
 
-<script src="../js/script.js"></script>
+    <button id="registerButton">Register</button>
+  </form>
+
+  <form
+    id="updateParticipant"
+    class="green-form"
+    action="/participant/update"
+    method="post"
+  >
+    <h2>Update Participant</h2>
+    <label for="name_updated">Full Name</label>
+    <input type="text" id="name_updated" name="par_name" required />
+    <div id="par_names_div"></div>
+    <fieldset id="user_info_fieldset">
+      <label for="number_updated">Phone Number</label>
+      <input type="tel" id="number_updated" name="par_number" required />
+      <label for="ward_updated">Ward</label>
+      <input type="text" name="par_ward" id="ward_updated" required />
+      <label for="mrn_updated">Membership Record Number</label>
+      <input type="text" id="mrn_updated" name="par_mrn" required />
+      <label for="agegroup_updated">Age Group</label>
+      <input type="text" name="par_agegroup" id="agegroup_updated" required />
+    </fieldset>
+
+    <input type="text" name="par_id" id="par_id" hidden />
+
+    <button id="updateButton">submit</button>
+  </form>
+</div>
+<section>
+  <h2>Attendance Analytics</h2>
+  <form>
+    <select name="analyticsSelect" id="analyticsSelect">
+      <option value="" disabled selected>select a type</option>
+      <option value="gpAttendanceTotal">Gathering Attendance Total</option>
+      <option value="gpAttendanceDaily">Gathering Attendance Daily</option>
+      <option value="attendanceByWard">Attendance By Ward</option>
+      <option value="attendanceByStudent">Attendance By Student</option>
+    </select>
+  </form>
+  <div id="analyticsDiv"></div>
+</section>
+<script src="../js/script.js" defer></script>

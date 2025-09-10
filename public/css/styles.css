@@ -17,8 +17,23 @@
     margin: 1rem auto;
 }
 
+.notice {
+    color: rgb(11, 18, 82);
+    margin: 1.5rem auto 1rem;
+    font-size: 1.7rem;
+    font-weight: 600;
+    font-style: italic;
+    text-align: center;
+}
+
+#formContainer {
+    display: grid;
+    grid-template-columns: 35% 30% 30%;
+    justify-content: space-evenly;
+    padding-top: 1rem;
+}
+
 .green-form {
-    width: 25%;
     margin: 1%;
     background-color: rgba(198, 226, 198, 0.959);
     border: 2px solid green;
@@ -27,8 +42,10 @@
 
 
 .navy-form {
-    width: 40%;
+    grid-row: 1 / 3;
+    position: relative;
     margin: 1%;
+    padding-bottom: 2rem;
     background-color: rgba(184, 194, 221, 0.959);
     border: 2px solid navy;
     border-radius: 15px;
@@ -52,11 +69,13 @@ button {
     border: none;
 }
 
-.navy-form #markAttendance, .navy-form #submitTotal {
+#markAttendance,
+#showAttendanceList,
+#proceed_to_submit {
     font-size: 1.1rem;
     font-weight: 600;
     width: fit-content;
-    margin: 1.5rem auto 2rem;
+    margin: 1.5rem auto 0.5rem;
     padding: 8px;
     color: white;
     background-color: rgb(20, 20, 214);
@@ -65,7 +84,9 @@ button {
 }
 
 
-.navy-form #markAttendance:hover, .navy-form #submitTotal:hover {
+#markAttendance:hover,
+#showAttendanceList:hover,
+#proceed_to_submit:hover {
     background-color: white;
     color: rgb(20, 20, 214);
     border: 2px solid rgb(20, 20, 214);
@@ -74,20 +95,29 @@ button {
 label {
     font-size: 1.2rem;
     text-align: left;
-    margin-left: 1rem;
+    margin-left: 10%;
     margin-top: 1rem;
 }
 
 input,
 select {
-    width: 80%;
-    margin-left: 1rem;
-    padding: 0.5rem;
+    font-size: 1.2rem;
+    width: 76%;
+    margin: auto 11%;
+    padding: 0.5rem 1%;
     border-radius: 5px;
 }
 
 #registerParticipant select {
     color: black;
+}
+
+
+.green-form>h2 {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    text-align: center;
+    color: rgb(10, 87, 17);
 }
 
 .green-form>button {
@@ -107,6 +137,12 @@ select {
     border: 2px solid rgb(10, 87, 17);
 }
 
+.navy-form>h2 {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    text-align: center;
+    color: navy;
+}
 
 .navy-form>button {
     font-size: 1.2rem;
@@ -123,4 +159,80 @@ select {
     background-color: white;
     color: navy;
     border: 2px solid navy;
+}
+
+#par_names,
+#par_names_div,
+#participantDisplay {
+    font-size: 1.2rem;
+    padding: 5px auto;
+    text-align: center;
+    background-color: white;
+    width: 75%;
+    margin: 0 auto;
+}
+
+#par_names p,
+#par_names_div p,
+#participantDisplay p {
+    position: relative;
+    border: 1px solid black;
+}
+
+#participantDisplay span {
+    position: absolute;
+    right: 0;
+    font-size: 1.1rem;
+    padding: 0 8px;
+    color: white;
+    background-color: rgb(168, 31, 21);
+}
+
+#par_names p:hover,
+#par_names_div p:hover {
+    background-color: rgb(162, 162, 226);
+}
+
+#showAttendanceCaution {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+#master_password_label,
+#master_password {
+    display: none;
+}
+
+#master_password_label.show,
+#master_password.show {
+    display: block;
+}
+
+#participantDisplay {
+    margin-top: 1rem;
+}
+
+.confirmDelete {
+    position: absolute;
+    top: 40%;
+    left: 5%;
+    font-size: 1.3rem;
+    text-align: center;
+    padding: 20px auto;
+    background-color: white;
+    width: 90%;
+    border: 2px solid navy;
+}
+
+.confirmDelete p {
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.confirmDelete span {
+    width: 30%;
+    margin: 0 10%;
+    padding: 5px;
+    background-color: navy;
+    color: white;
 }

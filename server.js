@@ -15,6 +15,7 @@ const bodyParser = require("body-parser")
 const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const participantRoute = require("./routes/participantRoute")
+const eventRoute = require("./routes/eventRoute")
 const pool = require("./database/")
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
@@ -61,27 +62,8 @@ app.get("/", baseController.buildHome)
 //Participant route
 app.use("/participant", participantRoute)
 
-// File Not Found Route - must be last route in list
-app.use(async (req, res, next) => {
-    next({ status: 404, message: 'Sorry, we appear to have lost that page.' })
-})
-
-/* ***********************
-* Express Error Handler
-* Place after all other middleware
-*************************/
-app.use(async (err, req, res, next) => {
-    console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-    if (err.status == 404) {
-        message = err.message
-    }
-    else { message = 'Oh no! There was a crash. Maybe try a different route?' }
-    res.render("errors/error", {
-        title: err.status || 'Server Error',
-        message
-    })
-})
-
+//event route
+app.use("/event", eventRoute)
 
 /**
  * server host name and port
