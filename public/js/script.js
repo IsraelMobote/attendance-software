@@ -464,15 +464,24 @@ analyticsSelect.addEventListener('input', () => {
     }
 })
 
+const fieldset = document.querySelector('.fieldset')
+fieldset.style.display = 'none'
+
+const select = document.querySelector('.selectMonth')
+
+const myChart = document.querySelector('#myChart')
+
 function showAttendanceTotal() {
     analyticsDiv.innerHTML = ''
-    const select = document.createElement('select')
-    select.setAttribute('class', 'selectMonth')
+
+    fieldset.style.display = 'grid'
+
     const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
         'october', 'november', 'december']
 
     const optionDisabled = document.createElement('option')
     optionDisabled.textContent = 'select month'
+    optionDisabled.disabled = true
     select.append(optionDisabled)
 
     months.forEach(element => {
@@ -482,8 +491,6 @@ function showAttendanceTotal() {
         select.append(option)
     });
 
-    analyticsDiv.append(select)
-
     let url = 'participant/getAttendanceTotal'
 
     const attendanceTotalDiv = document.createElement('div')
@@ -492,7 +499,9 @@ function showAttendanceTotal() {
     select.addEventListener('input', () => {
         let url = `/participant/getAttendanceData/${select.value}`
 
+        analyticsDiv.innerHTML = ''
         attendanceTotalDiv.innerHTML = ''
+        myChart.innerHTML = ''
         getAttendanceTotal(url, attendanceTotalDiv, analyticsDiv, select)
     })
 }
@@ -513,7 +522,13 @@ function getAttendanceTotal(url, attendanceTotalDiv, parentDiv, selectElement) {
                 });
             })
             console.log(dataList)
-            createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
+
+            if (dataList.length !== 0) {
+                createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
+            }
+            else {
+                analyticsDiv.innerHTML = `<p>No data found!! for ${selectElement.value}</p>`
+            }
 
         })
         .catch(function (error) {
@@ -681,11 +696,11 @@ function drawChart() {
 
     // Set Options
     const options = {
-        title: 'Average By Gathering Place Events'
+        title: `Average no of participants in ${select.value}`
     };
 
     // Draw
-    const chart = new google.visualization.BarChart(document.querySelector('#myChart'));
+    const chart = new google.visualization.BarChart(myChart);
 
     // this line of code is used to turn the array to a data table
     const dataTable = google.visualization.arrayToDataTable(dataSet);

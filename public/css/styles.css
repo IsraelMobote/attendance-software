@@ -251,9 +251,31 @@ select {
     color: white;
 }
 
+section h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin: 2rem auto;
+}
+
+.fieldset {
+    display: grid;
+    width: 80%;
+    margin: 2rem auto;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+    border: 0;
+}
+
 #analyticsDiv {
     width: 90%;
     margin: 0 auto;
+}
+
+#analyticsDiv p {
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 2rem;
 }
 
 .attendanceTotalDiv {
@@ -295,7 +317,7 @@ select {
     color: white;
 }
 
-.showGraphButton {
+#analyticsDiv .showGraphButton {
     font-size: 1.5rem;
     width: fit-content;
     padding: 8px;
@@ -305,7 +327,7 @@ select {
     transition: color 1s, background-color 1s;
 }
 
-.showGraphButton:hover {
+#analyticsDiv .showGraphButton:hover {
     background-color: white;
     color: rgba(14, 33, 117, 0.637);
     border: 2px solid rgba(14, 33, 117, 0.637);
