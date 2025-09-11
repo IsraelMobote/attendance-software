@@ -75,23 +75,23 @@ async function getUserInfo(par_name) {
 /* *****************************
 *   daily attendance submission
 * *************************** */
-async function submitAttendance(par_event, att_day, att_month, att_year, att_list) {
+async function submitAttendance(par_event, att_day, att_dayofmonth, att_month, att_year, att_list) {
     try {
         if (par_event == 'skillAcquisition') {
-            const sql = `INSERT INTO skill_attendance (att_day, att_month, att_year, att_list) VALUES ($1, $2, $3, $4) RETURNING *`
-            return await pool.query(sql, [att_day, att_month, att_year, att_list])
+            const sql = `INSERT INTO skill_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
+            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
         }
         else if (par_event == 'institute') {
-            const sql = `INSERT INTO institute_attendance (att_day, att_month, att_year, att_list) VALUES ($1, $2, $3, $4) RETURNING *`
-            return await pool.query(sql, [att_day, att_month, att_year, att_list])
+            const sql = `INSERT INTO institute_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
+            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
         }
         else if (par_event == 'family-history-and-temple') {
-            const sql = `INSERT INTO family_history_attendance (att_day, att_month, att_year, att_list) VALUES ($1, $2, $3, $4) RETURNING *`
-            return await pool.query(sql, [att_day, att_month, att_year, att_list])
+            const sql = `INSERT INTO family_history_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
+            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
         }
         else if (par_event == 'self_reliance') {
-            const sql = `INSERT INTO self_reliance_attendance (att_day, att_month, att_year, att_list) VALUES ($1, $2, $3, $4) RETURNING *`
-            return await pool.query(sql, [att_day, att_month, att_year, att_list])
+            const sql = `INSERT INTO self_reliance_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
+            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
         }
     } catch (error) {
         return error.message

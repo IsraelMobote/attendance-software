@@ -1,3 +1,25 @@
+const home = document.querySelector('#home')
+const statistics = document.querySelector('#statistics')
+const formContainer = document.querySelector('#formContainer')
+const analyticsSection = document.querySelector('#analyticsSection')
+
+home.style.display = "none"
+analyticsSection.style.display = "none"
+
+statistics.addEventListener('click', () => {
+    home.style.display = "block"
+    statistics.style.display = "none"
+    formContainer.style.display = "none"
+    analyticsSection.style.display = "block"
+})
+
+home.addEventListener('click', () => {
+    statistics.style.display = "block"
+    home.style.display = "none"
+    formContainer.style.display = "grid"
+    analyticsSection.style.display = "none"
+})
+
 let selectWard = document.querySelector('#ward')
 const eventSelect = document.querySelector("#event");
 
@@ -6,6 +28,13 @@ let att_list = document.querySelector('#att_list')
 const wards = ["Meiran", "Abule-egba", "Alakuko", "Sango", "Oju-Ore", "Iyana-paja", "Ijoko", "Iyana-iyesi", "Orile-agege"];
 
 const attendanceForm = document.querySelector('#attendanceForm')
+
+attendanceForm.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') { // Check if the pressed key is Enter
+        event.preventDefault(); // Prevent the default form submission
+        // Optional: You can add custom logic here, like focusing on the next input field
+    }
+});
 
 wards.forEach(element => {
     const optionElement = document.createElement('option')
@@ -504,6 +533,9 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
 
             // this is the empty list that will contain the event for the table heading
             stringList = []
+
+            // I ran this forEach loop to clean the data from the database and get the events
+            //for the table heading
             dataList.forEach(element => {
                 let newString = element.att_list
                 data.forEach(item => {
@@ -526,35 +558,138 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
                 table += '<th>' + element + '</th>'
             });
             table += '</tr>'
-            let number = 0
 
-            dataList.forEach(data => {
-                number += 1
-                table += '<tr><td>' + `${selectElement.value} ${number}` + '</td>'
-                stringList.forEach(string => {
-                    let counter = 0
-                    dataList.forEach(dataItem => {
-                        if (dataItem.att_day == number) {
-                            const list = dataItem.att_list.split(',')
-                            list.forEach(item => {
-                                if (item.includes(string)) {
-                                    counter += 1
-                                }
-                            });
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const listOfDayOfMonth = dataList.map(item => item.att_dayofmonth)
+
+            let dayOfWeek = ''
+
+            // this number is to check if all attendance list items has been checked
+            let checker = 0;
+
+            for (let num = 1; num < 32; num++) {
+
+                if (checker !== dataList.length) {
+
+
+                    dataList.forEach(item => {
+                        if (item.att_dayofmonth == num) {
+                            dayOfWeek = daysOfWeek[parseInt(item.att_day, 10)]
+                        }
+                    })
+
+                    // the if statement below is to make sure that days of the month not recorded in the attendance
+                    // are not shown in the table
+                    if (listOfDayOfMonth.includes(num.toString())) {
+                        table += '<tr><td>' + `(${dayOfWeek}) ${selectElement.value} ${num}` + '</td>'
+                    }
+
+                    // this loop selects the events one by one so that the number of occurence can be calculated
+                    // for each of them
+                    stringList.forEach(string => {
+                        let counter = 0
+                        checker = 0
+
+                        // this loop go through the attendance list for that day of the month and 
+                        // find the number of occurence for the event
+                        dataList.forEach(dataItem => {
+                            if (dataItem.att_dayofmonth == num) {
+
+                                // code to increment checker variable if a dataList Item matching the
+                                // dayOfMonth is found
+                                checker += 1
+
+                                const list = dataItem.att_list.split(',')
+                                list.forEach(item => {
+                                    if (item.includes(string)) {
+                                        counter += 1
+                                    }
+                                });
+                            }
+                        });
+
+                        // the if statement below is to make sure that days of the month not recorded in the attendance
+                        // are not shown in the table
+                        if (listOfDayOfMonth.includes(num.toString())) {
+                            table += `<td class='${dayOfWeek} ${string}'>` + counter + '</td>'
                         }
                     });
-                    table += '<td>' + counter + '</td>'
-                });
-                table += '</tr>'
-            })
+
+                    if (listOfDayOfMonth.includes(num.toString())) {
+                        table += '</tr>'
+                    }
+                }
+            }
 
             table += '</table>'
 
-            console.log(table)
             attendanceTotalDiv.insertAdjacentHTML("beforeend", table)
             parentDiv.append(attendanceTotalDiv)
+
+            eventList = stringList
+
+            // the showGraphButton will be used to display the averages and graph of the data
+            const showGraphButton = document.createElement('p')
+            showGraphButton.setAttribute('class', 'showGraphButton')
+            showGraphButton.textContent = 'show average'
+            parentDiv.append(showGraphButton)
+
+            getEventsAverageList(showGraphButton)
         })
         .catch(function (error) {
             console.log('There was a problem: ', error.message)
         })
+}
+
+let eventList = [];
+let eventsAverageList;
+
+let dataSet = [['event', 'average no of participants']];
+
+function getEventsAverageList(eventTriggerButton) {
+
+    eventTriggerButton.addEventListener('click', () => {
+        eventsAverageList = []
+        eventList.forEach(element => {
+            let total = 0
+            const nodes = document.querySelectorAll(`.${element}`)
+            nodes.forEach(element => {
+                total += parseInt(element.textContent)
+            });
+            let average = total / nodes.length
+            eventsAverageList.push(average)
+        })
+
+        // organising the data in the eventList and the eventsAverageList into the 
+        // dataSet list
+
+        if (dataSet.length == 1) {
+            for (let index = 0; index < eventList.length; index++) {
+                const element = [`${eventList[index]}`, parseInt(eventsAverageList[index])]
+                dataSet.push(element)
+            }
+        }
+
+        google.charts.load('current', { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+    })
+}
+
+// Your Function
+function drawChart() {
+
+    // Set Options
+    const options = {
+        title: 'Average By Gathering Place Events'
+    };
+
+    // Draw
+    const chart = new google.visualization.BarChart(document.querySelector('#myChart'));
+
+    // this line of code is used to turn the array to a data table
+    const dataTable = google.visualization.arrayToDataTable(dataSet);
+    chart.draw(dataTable, options);
+
+    // dataSet list variable has been populated in the function above
 }

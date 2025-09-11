@@ -24,7 +24,7 @@
     <label for="master_password" id="master_password_label"
       >enter master password</label
     >
-    <input type="password" id="master_password" />
+    <input type="password" id="master_password" required />
 
     <div id="participantDisplay"></div>
     <input type="text" name="att_list" id="att_list" hidden />
@@ -85,7 +85,7 @@
     <button id="updateButton">submit</button>
   </form>
 </div>
-<section>
+<section id="analyticsSection">
   <h2>Attendance Analytics</h2>
   <form>
     <select name="analyticsSelect" id="analyticsSelect">
@@ -97,5 +97,7 @@
     </select>
   </form>
   <div id="analyticsDiv"></div>
+  <div id="myChart" style="max-width: 1000px; height: 600px"></div>
 </section>
 <script src="../js/script.js" defer></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>

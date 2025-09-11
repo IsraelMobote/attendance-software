@@ -137,9 +137,10 @@ async function submitAttendance(req, res) {
     // the date object only returns the month number not the name of the month
     const att_month = months[date.getMonth()]
     const att_day = date.getDay()
+    const att_dayofmonth = date.getDate()
 
     console.log(par_event)
-    const submResult = await participantModel.submitAttendance(par_event, att_day, att_month, att_year, att_list)
+    const submResult = await participantModel.submitAttendance(par_event, att_day, att_dayofmonth, att_month, att_year, att_list)
 
     // you can log submResult to know of possible errors
     console.log(submResult)
@@ -147,7 +148,7 @@ async function submitAttendance(req, res) {
     if (submResult) {
         req.flash(
             "notice",
-            `Congratulations, you have submitted ${par_event} attendance for ${att_day} ${att_month} ${att_year}.`
+            `Congratulations, you have submitted ${par_event} attendance for ${att_dayofmonth} ${att_month} ${att_year}.`
         )
         res.redirect('/')
     } else {

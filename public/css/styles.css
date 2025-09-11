@@ -17,6 +17,20 @@
     margin: 1rem auto;
 }
 
+#home,
+#statistics {
+    font-size: 1.3rem;
+    position: absolute;
+    top: 1rem;
+    right: 3rem;
+    width: fit-content;
+    padding: 8px;
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
 .notice {
     color: rgb(11, 18, 82);
     margin: 1.5rem auto 1rem;
@@ -279,4 +293,24 @@ select {
     font-weight: 600;
     background-color: royalblue;
     color: white;
+}
+
+.showGraphButton {
+    font-size: 1.5rem;
+    width: fit-content;
+    padding: 8px;
+    background-color: rgba(14, 33, 117, 0.637);
+    border-radius: 8px;
+    color: white;
+    transition: color 1s, background-color 1s;
+}
+
+.showGraphButton:hover {
+    background-color: white;
+    color: rgba(14, 33, 117, 0.637);
+    border: 2px solid rgba(14, 33, 117, 0.637);
+}
+
+#myChart {
+    margin: 0 auto;
 }
