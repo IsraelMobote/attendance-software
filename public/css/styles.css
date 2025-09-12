@@ -288,13 +288,13 @@ section h2 {
     width: 100%;
 }
 
-#dataTable tr {
+tr {
     display: flex;
     justify-content: space-around;
 }
 
-#dataTable th,
-#dataTable td {
+th,
+td {
     flex-grow: 1;
     flex-basis: 0;
     flex-shrink: 0;
@@ -331,6 +331,28 @@ section h2 {
     background-color: white;
     color: rgba(14, 33, 117, 0.637);
     border: 2px solid rgba(14, 33, 117, 0.637);
+}
+
+.averageTable {
+    margin: 2rem auto 0;
+    width: 60%;
+}
+
+.averageTable td {
+    padding: 8px;
+}
+
+.averageTable tr>td:first-child {
+    font-size: 1.2rem;
+    font-weight: 600;
+    background-color: rgba(181, 209, 182, 0.568);
+}
+
+.averageTable tr:first-child>td {
+    font-size: 1.3rem;
+    font-weight: 600;
+    background-color: darkgreen;
+    color: white;
 }
 
 #myChart {

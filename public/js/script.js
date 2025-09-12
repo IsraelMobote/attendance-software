@@ -498,6 +498,7 @@ function showAttendanceTotal() {
 
     select.addEventListener('input', () => {
         let url = `/participant/getAttendanceData/${select.value}`
+        averageTableExists = false
 
         analyticsDiv.innerHTML = ''
         attendanceTotalDiv.innerHTML = ''
@@ -659,19 +660,23 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
 let eventList = [];
 let eventsAverageList;
 
-let dataSet = [['event', 'average no of participants']];
+let dataSet;
 
 function getEventsAverageList(eventTriggerButton) {
+    dataSet = [['Class', `Average no of participants in ${select.value}`]];
 
     eventTriggerButton.addEventListener('click', () => {
+
         eventsAverageList = []
         eventList.forEach(element => {
             let total = 0
             const nodes = document.querySelectorAll(`.${element}`)
-            nodes.forEach(element => {
+            nodesEdited = Array.from(nodes).filter(node => parseInt(node.textContent) > 0)
+
+            nodesEdited.forEach(element => {
                 total += parseInt(element.textContent)
             });
-            let average = total / nodes.length
+            let average = total / nodesEdited.length
             eventsAverageList.push(average)
         })
 
@@ -685,13 +690,17 @@ function getEventsAverageList(eventTriggerButton) {
             }
         }
 
+        if (!averageTableExists) {
+            addAverageTable()
+        }
+
         google.charts.load('current', { packages: ['corechart'] });
         google.charts.setOnLoadCallback(drawChart);
 
     })
 }
 
-// Your Function
+// this is the function to draw the google chart in the analytics for the total attendance
 function drawChart() {
 
     // Set Options
@@ -707,4 +716,20 @@ function drawChart() {
     chart.draw(dataTable, options);
 
     // dataSet list variable has been populated in the function above
+}
+
+let averageTableExists = false
+
+function addAverageTable() {
+    let averageTable = '<table class="averageTable">'
+
+    // dataSet list variable is declared in the local scope
+    dataSet.forEach(element => {
+        averageTable += '<tr><td>' + element[0] + '</td><td>' + element[1] + '</td></tr>'
+    });
+
+    averageTable += '</table>'
+    analyticsDiv.insertAdjacentHTML('beforeend', averageTable)
+
+    averageTableExists = true
 }
