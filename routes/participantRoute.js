@@ -20,5 +20,7 @@ router.post("/update", parController.updateParticipant);
 //route to get the attendance data by month
 router.get("/getAttendanceData/:month", parController.getAttDataByMonth);
 
+//route to get the name of participants by ward
+router.get("/getParNameByWard/:ward", parController.getParNameByWard);
 
 module.exports = router

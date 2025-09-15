@@ -457,32 +457,54 @@ function fetchSelectOptions(url) {
 
 const analyticsSelect = document.querySelector('#analyticsSelect')
 const analyticsDiv = document.querySelector('#analyticsDiv')
+const studentMonthlyAttendance = document.querySelector('#studentMonthlyAttendance')
+
+const select = document.querySelector('.selectMonth')
 
 analyticsSelect.addEventListener('input', () => {
+
+    select.innerHTML = ''
+    const optionDisabled = document.createElement('option')
+    optionDisabled.textContent = 'select month'
+    optionDisabled.disabled = true
+    optionDisabled.selected = true
+    select.append(optionDisabled)
+
     if (analyticsSelect.value == 'gpAttendanceTotal') {
         showAttendanceTotal()
+        myChart.style.display = 'none'
+        attendanceByWardDiv.style.display = 'none'
+        studentMonthlyAttendance.style.display = 'none'
+        analyticsDiv.style.display = 'block'
+    }
+    else if (analyticsSelect.value == 'attendanceByWard') {
+        myChart.style.display = 'none'
+        analyticsDiv.style.display = 'none'
+        studentMonthlyAttendance.style.display = 'none'
+        attendanceByWardDiv.style.display = 'block'
+        showAttendanceByWard()
+    }
+    else if (analyticsSelect.value == 'attendanceByStudent') {
+        myChart.style.display = 'none'
+        analyticsDiv.style.display = 'none'
+        attendanceByWardDiv.style.display = 'none'
+        studentMonthlyAttendance.style.display = 'block'
+        showStudentMonthlyAttendance()
     }
 })
 
 const fieldset = document.querySelector('.fieldset')
 fieldset.style.display = 'none'
 
-const select = document.querySelector('.selectMonth')
-
 const myChart = document.querySelector('#myChart')
+
+const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
+    'october', 'november', 'december']
 
 function showAttendanceTotal() {
     analyticsDiv.innerHTML = ''
 
     fieldset.style.display = 'grid'
-
-    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
-        'october', 'november', 'december']
-
-    const optionDisabled = document.createElement('option')
-    optionDisabled.textContent = 'select month'
-    optionDisabled.disabled = true
-    select.append(optionDisabled)
 
     months.forEach(element => {
         const option = document.createElement('option')
@@ -501,8 +523,8 @@ function showAttendanceTotal() {
         averageTableExists = false
 
         analyticsDiv.innerHTML = ''
-        attendanceTotalDiv.innerHTML = ''
         myChart.innerHTML = ''
+
         getAttendanceTotal(url, attendanceTotalDiv, analyticsDiv, select)
     })
 }
@@ -516,13 +538,15 @@ function getAttendanceTotal(url, attendanceTotalDiv, parentDiv, selectElement) {
             throw Error("Network response was not OK");
         })
         .then(function (data) {
-            dataList = []
+            let dataList = []
             data.forEach(element => {
                 element.rows.forEach(item => {
                     dataList.push(item)
                 });
             })
             console.log(dataList)
+
+            attendanceTotalDiv.innerHTML = ''
 
             if (dataList.length !== 0) {
                 createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
@@ -640,6 +664,10 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
             table += '</table>'
 
             attendanceTotalDiv.insertAdjacentHTML("beforeend", table)
+
+            // to clear the parent div before adding the child element
+            parentDiv.innerHTML = ''
+
             parentDiv.append(attendanceTotalDiv)
 
             eventList = stringList
@@ -691,7 +719,7 @@ function getEventsAverageList(eventTriggerButton) {
         }
 
         if (!averageTableExists) {
-            addAverageTable()
+            addAverageTable(dataSet, analyticsDiv)
         }
 
         google.charts.load('current', { packages: ['corechart'] });
@@ -702,6 +730,7 @@ function getEventsAverageList(eventTriggerButton) {
 
 // this is the function to draw the google chart in the analytics for the total attendance
 function drawChart() {
+    myChart.style.display = 'block'
 
     // Set Options
     const options = {
@@ -720,16 +749,313 @@ function drawChart() {
 
 let averageTableExists = false
 
-function addAverageTable() {
+
+function addAverageTable(dataList, parentDiv) {
     let averageTable = '<table class="averageTable">'
 
     // dataSet list variable is declared in the local scope
-    dataSet.forEach(element => {
+    dataList.forEach(element => {
         averageTable += '<tr><td>' + element[0] + '</td><td>' + element[1] + '</td></tr>'
     });
 
     averageTable += '</table>'
-    analyticsDiv.insertAdjacentHTML('beforeend', averageTable)
+    parentDiv.insertAdjacentHTML('beforeend', averageTable)
 
     averageTableExists = true
 }
+
+// attendance by ward lines of code
+
+let attendanceByWardDiv = document.querySelector('#attendanceByWard');
+function showAttendanceByWard() {
+
+    fieldset.style.display = 'grid'
+
+    const optionDisabled = document.createElement('option')
+    optionDisabled.textContent = 'select month'
+    optionDisabled.disabled = true
+    select.append(optionDisabled)
+
+    months.forEach(element => {
+        const option = document.createElement('option')
+        option.textContent = element
+        option.value = element
+        select.append(option)
+    });
+
+    select.addEventListener('input', () => {
+        attendanceByWardDiv.innerHTML = ''
+
+        selectWard = document.createElement('select')
+        const disabledOption = document.createElement('option')
+        disabledOption.textContent = 'select ward'
+        disabledOption.disabled = true
+        disabledOption.selected = true
+
+        selectWard.append(disabledOption)
+
+        wards.forEach(ward => {
+            const option = document.createElement('option')
+            option.textContent = ward
+            option.value = ward
+            selectWard.append(option)
+        });
+
+        const p = document.createElement('p')
+        p.textContent = 'show analysis'
+        p.style.display = 'none'
+
+        selectWard.addEventListener('input', () => {
+            p.style.display = 'block'
+            if (wardTableExists) {
+                if (attendanceByWardDiv.lastElementChild.tagName === 'TABLE') {
+                    attendanceByWardDiv.removeChild(attendanceByWardDiv.lastElementChild)
+                    wardTableExists = false
+                }
+            }
+        })
+
+        let attendanceByWardTable = document.createElement('table')
+        attendanceByWardTable.setAttribute('id', 'attendanceByWardTable')
+        attendanceByWardTable.style.display = 'none'
+
+        p.addEventListener('click', () => {
+            const url = `/participant/getParNameByWard/${selectWard.value}`
+            getParticipantsByWard(url, selectWard, select)
+        })
+        attendanceByWardDiv.append(selectWard)
+        attendanceByWardDiv.append(p)
+        attendanceByWardDiv.append(attendanceByWardTable)
+    })
+}
+
+let wardData
+function getParticipantsByWard(url, selectElement, selectMonth) {
+    let dataList = []
+
+    wardData = [[`Participant in ${selectElement.value}`, `No of days attended in ${selectMonth.value}`]]
+    fetch(`/participant/getAttendanceData/${select.value}`)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw Error("Network response was not OK");
+        })
+        .then(function (data) {
+            data.forEach(element => {
+                element.rows.forEach(item => {
+                    dataList.push(item)
+                });
+            })
+            console.log(dataList)
+            fetch(url)
+                .then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw Error("Network response was not OK");
+                })
+                .then(function (data) {
+
+                    const attendanceByWardTable = document.querySelector('#attendanceByWardTable')
+                    attendanceByWardTable.style.display = 'block'
+                    attendanceByWardTable.innerHTML = ''
+
+                    data.forEach(string => {
+                        let counter = 0;
+
+                        let attendedDay
+                        for (let num = 1; num < 32; num++) {
+
+                            attendedDay = 0
+                            dataList.forEach(dataItem => {
+
+                                if (dataItem.att_dayofmonth == num) {
+
+                                    const list = dataItem.att_list.split(',')
+                                    list.forEach(item => {
+                                        console.log(string.par_name)
+                                        if (item.includes(`${string.par_name}-`)) {
+                                            attendedDay = 1
+                                        }
+                                    });
+                                }
+                            })
+
+                            if (attendedDay == 1) {
+                                counter += 1
+                            }
+                        }
+                        const participantAttendance = [`${string.par_name}`, counter]
+                        wardData.push(participantAttendance)
+                    })
+
+                    let averageTable = '<table class="averageTable">'
+
+                    // dataSet list variable is declared in the local scope
+                    wardData.forEach(element => {
+                        averageTable += '<tr><td>' + element[0] + '</td><td>' + element[1] + '</td></tr>'
+                    });
+
+                    averageTable += '</table>'
+                    attendanceByWardTable.insertAdjacentHTML('beforeend', averageTable)
+
+                    google.charts.load('current', { packages: ['corechart'] });
+                    google.charts.setOnLoadCallback(drawWardChart);
+                })
+        })
+}
+
+let wardTableExists = false
+
+
+// this is the function to draw the google chart for the ward attendance
+function drawWardChart() {
+    myChart.style.display = 'block'
+
+    // Set Options
+    const options = {
+        title: 'Participants in Ward'
+    };
+
+    // Draw
+    const chart = new google.visualization.BarChart(myChart);
+
+    // this line of code is used to turn the array to a data table
+    const dataTable = google.visualization.arrayToDataTable(wardData);
+    chart.draw(dataTable, options);
+
+    // wardData list variable has been populated in the function above
+}
+
+
+function showStudentMonthlyAttendance() {
+    fieldset.style.display = 'grid'
+
+    const optionDisabled = document.createElement('option')
+    optionDisabled.textContent = 'select month'
+    optionDisabled.disabled = true
+    select.append(optionDisabled)
+
+    months.forEach(element => {
+        const option = document.createElement('option')
+        option.textContent = element
+        option.value = element
+        select.append(option)
+    });
+
+    select.addEventListener('input', () => {
+        studentMonthlyAttendance.innerHTML = ''
+
+        let input_label = document.createElement('label')
+        input_label.text = 'enter your name'
+
+        let par_name_input = document.createElement('input')
+        par_name_input.setAttribute('type', 'text')
+        par_name_input.setAttribute('id', 'par_name_input')
+
+        let namesDiv = document.createElement('div')
+        namesDiv.setAttribute('id', 'namesDiv')
+
+        let showStudentAttendance = document.createElement('p')
+        showStudentAttendance.setAttribute('id', 'showStudentAttendance')
+        showStudentAttendance.textContent = 'show attendance'
+
+        let studentTable = document.createElement('table')
+        studentTable.setAttribute('id', 'studentTable')
+
+        studentMonthlyAttendance.append(input_label)
+        studentMonthlyAttendance.append(par_name_input)
+        studentMonthlyAttendance.append(namesDiv)
+        studentMonthlyAttendance.append(showStudentAttendance)
+        studentMonthlyAttendance.append(studentTable)
+
+        par_name_input.addEventListener('input', () => {
+            namesDiv.style.display = 'none'
+            showStudentAttendance.style.display = 'none'
+            studentTable.style.display = 'none'
+
+            if (par_name_input.value.length > 2) {
+                let url = "/participant/getNames/"
+                fetchDataWithUrl(url, namesDiv, par_name_input, showStudentAttendance)
+            }
+        })
+
+        showStudentAttendance.addEventListener('click', () => {
+            studentTable.style.display = 'block'
+            fetchStudentAttendanceTable(par_name_input, select, studentMonthlyAttendance)
+        })
+    })
+}
+
+function fetchStudentAttendanceTable(name_input, selectMonth, parentDiv) {
+    let dataList = []
+
+    wardData = [[`Days ${name_input.value} attended in ${selectMonth.value}`, 'Classes Attended']]
+    fetch(`/participant/getAttendanceData/${selectMonth.value}`)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw Error("Network response was not OK");
+        })
+        .then(function (data) {
+            let dataList = []
+            data.forEach(element => {
+                element.rows.forEach(item => {
+                    dataList.push(item)
+                });
+            })
+            console.log(dataList)
+
+            let studentTable = document.querySelector('#studentTable')
+            studentTable.innerHTML = ''
+
+            if (dataList.length !== 0) {
+                for (let num = 1; num < 32; num++) {
+                    let classesString = ''
+                    dataList.forEach(dataItem => {
+                        if (dataItem.att_dayofmonth == num) {
+
+                            const list = dataItem.att_list.split(',')
+                            list.forEach(item => {
+                                if (item.includes(`${name_input.value}-`)) {
+                                    console.log(item)
+                                    let newString = item.replace(`${name_input.value}-`, '')
+                                    newString = newString.replace(/"/g, '')
+                                    newString = newString.replace(/'/g, '')
+                                    if (!classesString.includes(newString)) {
+                                        classesString += ` ${newString},`
+                                    }
+                                }
+                            });
+                        }
+                    })
+
+                    if (classesString !== '') {
+                        const participantAttendance = [`${selectMonth.value} ${num}`, classesString]
+                        wardData.push(participantAttendance)
+                    }
+                }
+                const total = ['Total Number of Days Attended', (wardData.length - 1)]
+                wardData.push(total)
+
+                let averageTable = '<table class="averageTable">'
+
+                // dataSet list variable is declared in the local scope
+                wardData.forEach(element => {
+                    averageTable += '<tr><td>' + element[0] + '</td><td>' + element[1] + '</td></tr>'
+                });
+
+                averageTable += '</table>'
+                studentTable.insertAdjacentHTML('beforeend', averageTable)
+            }
+            else {
+                studentTable.insertAdjacentHTML('beforeend', `<tr><td>No data found!! for ${selectMonth.value}</td></tr>`)
+            }
+        })
+        .catch(function (error) {
+            console.log('There was a problem: ', error.message)
+        })
+}
+

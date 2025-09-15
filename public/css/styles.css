@@ -251,6 +251,7 @@ select {
     color: white;
 }
 
+/*------------ analytics styling ---------------*/
 section h2 {
     font-size: 2rem;
     text-align: center;
@@ -284,7 +285,7 @@ section h2 {
 }
 
 #dataTable {
-    margin: 0;
+    margin-top: 5rem;
     width: 100%;
 }
 
@@ -333,22 +334,26 @@ td {
     border: 2px solid rgba(14, 33, 117, 0.637);
 }
 
-.averageTable {
-    margin: 2rem auto 0;
+.averageTable,
+#attendanceByWardTable {
+    margin: 3rem auto 0;
     width: 60%;
 }
 
-.averageTable td {
+.averageTable td,
+#attendanceByWardTable td {
     padding: 8px;
 }
 
-.averageTable tr>td:first-child {
+.averageTable tr>td:first-child,
+#attendanceByWardTable tr>td:first-child {
     font-size: 1.2rem;
     font-weight: 600;
     background-color: rgba(181, 209, 182, 0.568);
 }
 
-.averageTable tr:first-child>td {
+.averageTable tr:first-child>td,
+#attendanceByWardTable tr:first-child>td {
     font-size: 1.3rem;
     font-weight: 600;
     background-color: darkgreen;
@@ -357,4 +362,100 @@ td {
 
 #myChart {
     margin: 0 auto;
+}
+
+/*--------------- analytics for attendance by ward --------*/
+
+
+#attendanceByWard p {
+    font-size: 1.5rem;
+    width: fit-content;
+    margin-top: 1rem;
+    margin-left: 11%;
+    padding: 8px;
+    background-color: rgba(14, 33, 117, 0.637);
+    border-radius: 8px;
+    color: white;
+    transition: color 1s, background-color 1s;
+}
+
+#attendanceByWard p:hover {
+    background-color: white;
+    color: rgba(14, 33, 117, 0.637);
+    border: 2px solid rgba(14, 33, 117, 0.637);
+}
+
+
+/*--------------- analytics for attendance by ward --------*/
+
+#namesDiv {
+    font-size: 1.4rem;
+    padding: 5px auto;
+    text-align: center;
+    background-color: white;
+    width: 40%;
+    margin-left: 12%;
+}
+
+#namesDiv p {
+    border: 1px solid black;
+}
+
+#namesDiv p:hover {
+    background-color: rgb(162, 162, 226);
+}
+
+#studentMonthlyAttendance input {
+    width: 40%;
+}
+
+#showStudentAttendance {
+    font-size: 1.5rem;
+    width: fit-content;
+    margin-top: 0.8rem;
+    margin-left: 11%;
+    padding: 8px;
+    background-color: navy;
+    border-radius: 8px;
+    color: white;
+    transition: color 1s, background-color 1s;
+}
+
+
+#showStudentAttendance:hover {
+    background-color: white;
+    color: navy;
+    border: 2px solid navy;
+}
+
+#studentTable {
+    margin-top: 4rem;
+    margin-left: 12%;
+}
+
+#studentTable td {
+    font-size: 1.3rem;
+}
+
+#studentTable tr:first-child {
+    background-color: royalblue;
+    color: white;
+    font-weight: 600;
+}
+
+#studentTable tr:last-child>td {
+    background-color: rgb(163, 180, 228);
+    color: black;
+    font-weight: 600;
+    padding: 1rem 0;
+}
+
+footer {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 16rem;
+    background-color: rgba(0, 0, 128, 0.829);
+    color: white;
 }

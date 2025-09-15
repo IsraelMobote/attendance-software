@@ -181,4 +181,15 @@ async function getAttDataByMonth(req, res) {
     }
 }
 
-module.exports = { registerParticipant, updateParticipant, getNames, submitAttendance, getUserInfo, getAttDataByMonth }
+async function getParNameByWard(req, res) {
+    const ward = req.params.ward
+    const par_names = await participantModel.getParNameByWard(ward)
+
+    if (par_names) {
+        return res.json(par_names)
+    } else {
+        next(new Error("No data returned"))
+    }
+}
+
+module.exports = { registerParticipant, updateParticipant, getNames, submitAttendance, getUserInfo, getAttDataByMonth, getParNameByWard }

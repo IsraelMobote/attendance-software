@@ -120,5 +120,15 @@ async function getAttDataByMonth(month) {
     }
 }
 
-module.exports = { registerParticipant, updateParticipantInfo, getNames, getNameById, getUserInfo, getAttDataByMonth, submitAttendance };
+async function getParNameByWard(ward) {
+    try {
+        const sql = `SELECT par_name FROM participant WHERE par_ward = $1`
+        const data = await pool.query(sql, [ward])
+
+        return data.rows
+    } catch (error) {
+        console.error("getParNameByWard error " + error)
+    }
+}
+module.exports = { registerParticipant, updateParticipantInfo, getNames, getNameById, getUserInfo, getAttDataByMonth, getParNameByWard, submitAttendance };
 
