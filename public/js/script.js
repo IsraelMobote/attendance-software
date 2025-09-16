@@ -215,6 +215,8 @@ masterPassword.addEventListener("input", () => {
 
 eventSelect.addEventListener("click", function () {
     participantDisplay.style.display = 'none'
+    proceedToSubmit.style.display = 'none'
+    submitButton.style.display = 'none'
 
     // this code was added to remove the master label and pasword if it is displayed
     // the label and password will be removed when the eventSelect form element is clicked 
@@ -372,6 +374,20 @@ proceedToSubmit.addEventListener('click', () => {
     }
 
     submitButton.style.display = 'block'
+})
+
+// code to set the value of the corresponding local storage list to be empty list when the submit button
+// is clicked
+submitButton.addEventListener('click', () => {
+    if (eventSelect.value == 'skillAcquisition') {
+        localStorage.setItem('skillAttendance', JSON.stringify([]))
+    }
+    else if (eventSelect.value == 'institute') {
+        localStorage.setItem('instituteAttendance', JSON.stringify([]))
+    }
+    else if (eventSelect.value == 'family-history-and-temple') {
+        localStorage.setItem('familyhistoryAttendance', JSON.stringify([]))
+    }
 })
 
 // script for the update form starts here
