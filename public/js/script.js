@@ -470,6 +470,9 @@ analyticsSelect.addEventListener('input', () => {
     optionDisabled.selected = true
     select.append(optionDisabled)
 
+    //line of code to hide the print button
+    printButton.style.display = 'none'
+
     if (analyticsSelect.value == 'gpAttendanceTotal') {
         showAttendanceTotal()
         myChart.style.display = 'none'
@@ -519,6 +522,9 @@ function showAttendanceTotal() {
     attendanceTotalDiv.setAttribute('class', 'attendanceTotalDiv')
 
     select.addEventListener('input', () => {
+        // this line of code is to show the print button
+        printButton.style.display = 'block'
+
         let url = `/participant/getAttendanceData/${select.value}`
         averageTableExists = false
 
@@ -592,12 +598,14 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
                     }
                 });
             });
+            stringList.push('Daily-Total')
+
             let table = '<table id=dataTable ><tr>'
             table += '<th>' + 'Day' + '</th>'
             stringList.forEach(element => {
                 table += '<th>' + element + '</th>'
             });
-            table += '</tr>'
+            // table += '<th>Daily Total</th></tr>'
 
             const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const listOfDayOfMonth = dataList.map(item => item.att_dayofmonth)
@@ -629,6 +637,8 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
                     stringList.forEach(string => {
                         let counter = 0
                         checker = 0
+                        let eventItemList = []
+                        let dailyTotal = []
 
                         // this loop go through the attendance list for that day of the month and 
                         // find the number of occurence for the event
@@ -642,7 +652,20 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
                                 const list = dataItem.att_list.split(',')
                                 list.forEach(item => {
                                     if (item.includes(string)) {
-                                        counter += 1
+                                        if (!eventItemList.includes(item)) {
+                                            eventItemList.push(item)
+                                            counter += 1
+                                        }
+                                    }
+                                    else if (string == 'Daily-Total') {
+                                        stringList.forEach(stringItem => {
+                                            if (item.includes(stringItem)) {
+                                                editedString = item.replace(stringItem, '');
+                                                if (!dailyTotal.includes(editedString)) {
+                                                    dailyTotal.push(editedString)
+                                                }
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -651,7 +674,12 @@ function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
                         // the if statement below is to make sure that days of the month not recorded in the attendance
                         // are not shown in the table
                         if (listOfDayOfMonth.includes(num.toString())) {
-                            table += `<td class='${dayOfWeek} ${string}'>` + counter + '</td>'
+                            if (string !== 'Daily-Total') {
+                                table += `<td class='${dayOfWeek} ${string}'>` + counter + '</td>'
+                            }
+                            else if (string == 'Daily-Total') {
+                                table += `<td class='${dayOfWeek} ${string}'>` + dailyTotal.length + '</td>'
+                            }
                         }
                     });
 
@@ -784,6 +812,9 @@ function showAttendanceByWard() {
     });
 
     select.addEventListener('input', () => {
+        // this line of code is to show the print button
+        printButton.style.display = 'block'
+
         attendanceByWardDiv.innerHTML = ''
 
         selectWard = document.createElement('select')
@@ -945,6 +976,9 @@ function showStudentMonthlyAttendance() {
     });
 
     select.addEventListener('input', () => {
+        // this line of code is to show the print button
+        printButton.style.display = 'block'
+
         studentMonthlyAttendance.innerHTML = ''
 
         let input_label = document.createElement('label')
@@ -1059,3 +1093,10 @@ function fetchStudentAttendanceTable(name_input, selectMonth, parentDiv) {
         })
 }
 
+// print button
+const printButton = document.querySelector('#print');
+printButton.style.display = 'none'
+
+printButton.addEventListener('click', () => {
+    window.print()
+})

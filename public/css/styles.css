@@ -11,6 +11,8 @@
     background-color: rgb(24, 24, 158);
     color: white;
     align-content: center;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
 }
 
 #header>span {
@@ -18,10 +20,11 @@
 }
 
 #home,
-#statistics {
+#statistics,
+#print {
     font-size: 1.3rem;
     position: absolute;
-    top: 1rem;
+    top: 2rem;
     right: 3rem;
     width: fit-content;
     padding: 8px;
@@ -252,10 +255,19 @@ select {
 }
 
 /*------------ analytics styling ---------------*/
-section h2 {
+#analyticsSection {
+    position: relative;
+}
+
+#analyticsSection h2 {
     font-size: 2rem;
     text-align: center;
     margin: 2rem auto;
+}
+
+#analyticsSection #print {
+    position: absolute;
+    top: 0;
 }
 
 .fieldset {
@@ -458,4 +470,43 @@ footer {
     margin-top: 16rem;
     background-color: rgba(0, 0, 128, 0.829);
     color: white;
+}
+
+/*-----------  print media styling ------------------*/
+
+#print {
+    cursor: pointer;
+}
+
+@media print {
+    body * {
+        color: black;
+    }
+
+    table td {
+        color: black !important;
+    }
+
+    #analyticsSelect,
+    #att_year,
+    .selectMonth,
+    .showGraphButton,
+    #attendanceByWard p,
+    #showStudentAttendance {
+        display: none !important;
+    }
+
+    #home {
+        position: absolute;
+        top: -20rem;
+    }
+
+    #print {
+        position: absolute;
+        right: -100rem;
+    }
+
+    footer {
+        display: none;
+    }
 }
