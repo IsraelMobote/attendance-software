@@ -75,24 +75,11 @@ async function getUserInfo(par_name) {
 /* *****************************
 *   daily attendance submission
 * *************************** */
-async function submitAttendance(par_event, att_day, att_dayofmonth, att_month, att_year, att_list) {
+async function submitAttendance(att_event, att_day, att_dayofmonth, att_month, att_year, att_list) {
     try {
-        if (par_event == 'skillAcquisition') {
-            const sql = `INSERT INTO skill_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
-            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
-        }
-        else if (par_event == 'institute') {
-            const sql = `INSERT INTO institute_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
-            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
-        }
-        else if (par_event == 'family-history-and-temple') {
-            const sql = `INSERT INTO family_history_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
-            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
-        }
-        else if (par_event == 'self_reliance') {
-            const sql = `INSERT INTO self_reliance_attendance (att_day, att_dayofmonth, att_month, att_year, att_list) VALUES ($1, $2, $3, $4, $5) RETURNING *`
-            return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_list])
-        }
+        const sql = `INSERT INTO attendance (att_day, att_dayofmonth, att_month, att_year, att_event, att_list) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`
+        return await pool.query(sql, [att_day, att_dayofmonth, att_month, att_year, att_event, att_list])
+
     } catch (error) {
         return error.message
     }
@@ -100,21 +87,11 @@ async function submitAttendance(par_event, att_day, att_dayofmonth, att_month, a
 
 async function getAttDataByMonth(month) {
     try {
-        let totalData = []
-        const sql = `SELECT * FROM skill_attendance WHERE att_month = $1`
+        const sql = `SELECT * FROM attendance WHERE att_month = $1`
         const data = await pool.query(sql, [month])
 
-        const sql_two = `SELECT * FROM institute_attendance WHERE att_month = $1`
-        const data_two = await pool.query(sql_two, [month])
-
-        const sql_three = `SELECT * FROM family_history_attendance WHERE att_month = $1`
-        const data_three = await pool.query(sql_three, [month])
-
-        totalData.push(data)
-        totalData.push(data_two)
-        totalData.push(data_three)
-
-        return totalData
+        console.log(data.rows)
+        return data.rows
     } catch (error) {
         console.error("getAttDataByMonth error " + error)
     }

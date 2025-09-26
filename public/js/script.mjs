@@ -1,3 +1,5 @@
+import showAttendanceTotal from "./attendanceTotal.mjs"
+
 const home = document.querySelector('#home')
 const statistics = document.querySelector('#statistics')
 const formContainer = document.querySelector('#formContainer')
@@ -45,6 +47,40 @@ wards.forEach(element => {
 
 const url = '/event/getEventType/'
 fetchSelectOptions(url)
+
+
+function fetchSelectOptions(url) {
+
+    fetch(url)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw Error("Network response was not OK");
+        })
+        .then(function (data) {
+
+            data.forEach(par => {
+                const categories = par.values_list.split(',')
+                categories.forEach(element => {
+                    let newString = element.replace('[', '')
+                    newString = newString.replace(']', '')
+
+                    const option = document.createElement('option')
+                    option.value = newString.split(' ').join('')
+                    option.textContent = newString
+
+                    // I added the newly created option element to the event select form component with the
+                    // line below
+                    eventSelect.append(option)
+                });
+            });
+        })
+        .catch(function (error) {
+            console.log('There was a problem: ', error.message)
+        })
+}
+
 
 //code to enable names to show in the div for the user input value in the participant-attendance form
 const nameInput = document.querySelector('#nameInput');
@@ -138,10 +174,7 @@ function populateDiv(dataList, parentDiv, nameInput, actionField, actionFunction
 }
 
 
-let skillAttendanceList = JSON.parse(localStorage.getItem('skillAttendance')) || [];
-let instituteAttendanceList = JSON.parse(localStorage.getItem('instituteAttendance')) || [];
-let familyhistoryAttendanceList = JSON.parse(localStorage.getItem('familyhistoryAttendance')) || [];
-
+let attendanceList;
 const markAttendance = document.querySelector("#markAttendance");
 
 markAttendance.style.display = 'none';
@@ -154,16 +187,12 @@ markAttendance.addEventListener("click", () => {
     const optionElement = eventSelect.options[eventSelect.selectedIndex]; // Get the selected option
     const optionText = optionElement.textContent;
 
-    const nameString = `${nameInput.value}-${optionText}`
+    const nameString = `${nameInput.value}`
 
-    if (optionElement.value == 'skillAcquisition' && nameInput.value) {
-        checkForCategoryAndStore(skillAttendanceList, nameInput, nameString, statusMessage, 'skillAttendance')
-    }
-    else if (optionElement.value == 'institute' && nameInput.value) {
-        checkForCategoryAndStore(instituteAttendanceList, nameInput, nameString, statusMessage, 'instituteAttendance')
-    }
-    else if (optionElement.value == 'family-history-and-temple' && nameInput.value) {
-        checkForCategoryAndStore(familyhistoryAttendanceList, nameInput, nameString, statusMessage, 'familyhistoryAttendance')
+    attendanceList = JSON.parse(localStorage.getItem(optionElement.value)) || [];
+
+    if (nameInput.value) {
+        checkForCategoryAndStore(attendanceList, nameInput, nameString, statusMessage, optionElement.value)
     }
 })
 
@@ -172,6 +201,8 @@ function checkForCategoryAndStore(attendanceList, nameInput, nameString, statusM
     if (!attendanceList.includes(nameString)) {
         let result = '';
         attendanceList.forEach(element => {
+            // this second if statement is to make sure that the same person does not appear in the attendance list
+            // twice
             if (element.includes(nameInput.value)) {
                 result = 'found'
             }
@@ -226,6 +257,8 @@ eventSelect.addEventListener("click", function () {
 
 })
 
+const optionElement = eventSelect.options[eventSelect.selectedIndex]; // Get the selected option
+
 const showAttendanceCaution = document.querySelector('#showAttendanceCaution');
 showAttendanceCaution.style.display = 'none'
 
@@ -257,35 +290,18 @@ showAttendanceList.addEventListener("click", () => {
         showAttendanceCaution.style.display = 'block'
     }
 
-    const optionElement = eventSelect.options[eventSelect.selectedIndex]; // Get the selected option
-    if (optionElement.value == 'skillAcquisition') {
-        participantDisplay.innerHTML = ""
+    participantDisplay.innerHTML = ""
 
-        const displayHeading = document.createElement('h2')
-        displayHeading.textContent = `${optionElement.value} Attendance`
+    const option = eventSelect.options[eventSelect.selectedIndex];
 
-        participantDisplay.append(displayHeading)
-        populateDivWithList(skillAttendanceList, participantDisplay)
-    }
-    else if (optionElement.value == 'institute') {
-        participantDisplay.innerHTML = ""
+    const displayHeading = document.createElement('h2')
+    displayHeading.textContent = `${option.value} Attendance`
 
-        const displayHeading = document.createElement('h3')
-        displayHeading.textContent = `${optionElement.value} Attendance`
-
-        participantDisplay.append(displayHeading)
-        populateDivWithList(instituteAttendanceList, participantDisplay)
-    }
-    else if (optionElement.value == 'family-history-and-temple') {
-        participantDisplay.innerHTML = ""
-
-        const displayHeading = document.createElement('h2')
-        displayHeading.textContent = `${optionElement.value} Attendance`
-
-        participantDisplay.append(displayHeading)
-        populateDivWithList(familyhistoryAttendanceList, participantDisplay)
-    }
-})
+    participantDisplay.append(displayHeading)
+    const attendance = JSON.parse(localStorage.getItem(option.value))
+    populateDivWithList(attendance, participantDisplay)
+}
+)
 
 function populateDivWithList(list, parentDiv) {
 
@@ -319,18 +335,11 @@ function populateDivWithList(list, parentDiv) {
                         attendanceForm.removeChild(attendanceForm.lastChild)
 
                         const optionElement = eventSelect.options[eventSelect.selectedIndex]; // Get the selected option
-                        if (optionElement.value == 'skillAcquisition') {
-                            skillAttendanceList = skillAttendanceList.filter(item => item !== element)
-                            localStorage.setItem('skillAttendance', JSON.stringify(skillAttendanceList))
-                        }
-                        else if (optionElement.value == 'institute') {
-                            instituteAttendanceList = instituteAttendanceList.filter(item => item !== element)
-                            localStorage.setItem('instituteAttendance', JSON.stringify(instituteAttendanceList))
-                        }
-                        else if (optionElement.value == 'family-history-and-temple') {
-                            familyhistoryAttendanceList = familyhistoryAttendanceList.filter(item => item !== element)
-                            localStorage.setItem('familyhistoryAttendance', JSON.stringify(familyhistoryAttendanceList))
-                        }
+
+                        let attendance = JSON.parse(localStorage.getItem(optionElement.value))
+
+                        attendance = attendance.filter(item => item !== element)
+                        localStorage.setItem(optionElement.value, JSON.stringify(attendance))
                     });
 
                     const noButton = document.createElement('span')
@@ -353,7 +362,6 @@ function populateDivWithList(list, parentDiv) {
         para.append(span)
 
         parentDiv.append(para)
-
     })
 
 }
@@ -363,31 +371,18 @@ submitButton.style.display = 'none'
 
 proceedToSubmit.addEventListener('click', () => {
 
-    if (eventSelect.value == 'skillAcquisition') {
-        att_list.setAttribute('value', skillAttendanceList)
-    }
-    else if (eventSelect.value == 'institute') {
-        att_list.setAttribute('value', instituteAttendanceList)
-    }
-    else if (eventSelect.value == 'family-history-and-temple') {
-        att_list.setAttribute('value', familyhistoryAttendanceList)
-    }
+    const optionElement = eventSelect.options[eventSelect.selectedIndex]; // Get the selected option
+    let attendance = JSON.parse(localStorage.getItem(optionElement.value))
 
+    att_list.setAttribute('value', attendance)
     submitButton.style.display = 'block'
 })
 
 // code to set the value of the corresponding local storage list to be empty list when the submit button
 // is clicked
 submitButton.addEventListener('click', () => {
-    if (eventSelect.value == 'skillAcquisition') {
-        localStorage.setItem('skillAttendance', JSON.stringify([]))
-    }
-    else if (eventSelect.value == 'institute') {
-        localStorage.setItem('instituteAttendance', JSON.stringify([]))
-    }
-    else if (eventSelect.value == 'family-history-and-temple') {
-        localStorage.setItem('familyhistoryAttendance', JSON.stringify([]))
-    }
+    const optionElement = eventSelect.options[eventSelect.selectedIndex]; // Get the selected option
+    localStorage.setItem(optionElement.value, JSON.stringify([]))
 })
 
 // script for the update form starts here
@@ -439,38 +434,6 @@ function fetchNameInfo(url) {
         })
 }
 
-function fetchSelectOptions(url) {
-
-    fetch(url)
-        .then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
-            throw Error("Network response was not OK");
-        })
-        .then(function (data) {
-
-            data.forEach(par => {
-                const categories = par.values_list.split(',')
-                categories.forEach(element => {
-                    let newString = element.replace('[', '')
-                    newString = newString.replace(']', '')
-
-                    const option = document.createElement('option')
-                    option.value = par.category_type
-                    option.textContent = newString
-
-                    // I added the newly created option element to the event select form component with the
-                    // line below
-                    eventSelect.append(option)
-                });
-            });
-        })
-        .catch(function (error) {
-            console.log('There was a problem: ', error.message)
-        })
-}
-
 const analyticsSelect = document.querySelector('#analyticsSelect')
 const analyticsDiv = document.querySelector('#analyticsDiv')
 const studentMonthlyAttendance = document.querySelector('#studentMonthlyAttendance')
@@ -511,302 +474,6 @@ analyticsSelect.addEventListener('input', () => {
         showStudentMonthlyAttendance()
     }
 })
-
-const fieldset = document.querySelector('.fieldset')
-fieldset.style.display = 'none'
-
-const myChart = document.querySelector('#myChart')
-
-const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
-    'october', 'november', 'december']
-
-function showAttendanceTotal() {
-    analyticsDiv.innerHTML = ''
-
-    fieldset.style.display = 'grid'
-
-    months.forEach(element => {
-        const option = document.createElement('option')
-        option.textContent = element
-        option.value = element
-        select.append(option)
-    });
-
-    let url = 'participant/getAttendanceTotal'
-
-    const attendanceTotalDiv = document.createElement('div')
-    attendanceTotalDiv.setAttribute('class', 'attendanceTotalDiv')
-
-    select.addEventListener('input', () => {
-        // this line of code is to show the print button
-        printButton.style.display = 'block'
-
-        let url = `/participant/getAttendanceData/${select.value}`
-        averageTableExists = false
-
-        analyticsDiv.innerHTML = ''
-        myChart.innerHTML = ''
-
-        getAttendanceTotal(url, attendanceTotalDiv, analyticsDiv, select)
-    })
-}
-
-function getAttendanceTotal(url, attendanceTotalDiv, parentDiv, selectElement) {
-    fetch(url)
-        .then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
-            throw Error("Network response was not OK");
-        })
-        .then(function (data) {
-            let dataList = []
-            data.forEach(element => {
-                element.rows.forEach(item => {
-                    dataList.push(item)
-                });
-            })
-            console.log(dataList)
-
-            attendanceTotalDiv.innerHTML = ''
-
-            if (dataList.length !== 0) {
-                createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv)
-            }
-            else {
-                analyticsDiv.innerHTML = `<p>No data found!! for ${selectElement.value}</p>`
-            }
-
-        })
-        .catch(function (error) {
-            console.log('There was a problem: ', error.message)
-        })
-}
-
-function createDataTable(dataList, selectElement, attendanceTotalDiv, parentDiv) {
-    fetch("/participant/getNames/")
-        .then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
-            throw Error("Network response was not OK");
-        })
-        .then(function (data) {
-
-            // this is the empty list that will contain the event for the table heading
-            stringList = []
-
-            // I ran this forEach loop to clean the data from the database and get the events
-            //for the table heading
-            dataList.forEach(element => {
-                let newString = element.att_list
-                data.forEach(item => {
-                    newString = newString.replace(item.par_name, '')
-                    newString = newString.replace(/' '/g, '')
-                });
-
-                let newStringList = newString.split(',')
-                newStringList.forEach(item => {
-                    item = item.replace('-', '')
-                    item = item.trim()
-                    if (!stringList.includes(item)) {
-                        stringList.push(item)
-                    }
-                });
-            });
-            stringList.push('Daily-Total')
-
-            let table = '<table id=dataTable ><tr>'
-            table += '<th>' + 'Day' + '</th>'
-            stringList.forEach(element => {
-                table += '<th>' + element + '</th>'
-            });
-            // table += '<th>Daily Total</th></tr>'
-
-            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const listOfDayOfMonth = dataList.map(item => item.att_dayofmonth)
-
-            let dayOfWeek = ''
-
-            // this number is to check if all attendance list items has been checked
-            let checker = 0;
-
-            for (let num = 1; num < 32; num++) {
-
-                if (checker !== dataList.length) {
-
-
-                    dataList.forEach(item => {
-                        if (item.att_dayofmonth == num) {
-                            dayOfWeek = daysOfWeek[parseInt(item.att_day, 10)]
-                        }
-                    })
-
-                    // the if statement below is to make sure that days of the month not recorded in the attendance
-                    // are not shown in the table
-                    if (listOfDayOfMonth.includes(num.toString())) {
-                        table += '<tr><td>' + `(${dayOfWeek}) ${selectElement.value} ${num}` + '</td>'
-                    }
-
-                    // this loop selects the events one by one so that the number of occurence can be calculated
-                    // for each of them
-                    stringList.forEach(string => {
-                        let counter = 0
-                        checker = 0
-                        let eventItemList = []
-                        let dailyTotal = []
-
-                        // this loop go through the attendance list for that day of the month and 
-                        // find the number of occurence for the event
-                        dataList.forEach(dataItem => {
-                            if (dataItem.att_dayofmonth == num) {
-
-                                // code to increment checker variable if a dataList Item matching the
-                                // dayOfMonth is found
-                                checker += 1
-
-                                const list = dataItem.att_list.split(',')
-                                list.forEach(item => {
-                                    if (item.includes(string)) {
-                                        if (!eventItemList.includes(item)) {
-                                            eventItemList.push(item)
-                                            counter += 1
-                                        }
-                                    }
-                                    else if (string == 'Daily-Total') {
-                                        stringList.forEach(stringItem => {
-                                            if (item.includes(stringItem)) {
-                                                editedString = item.replace(stringItem, '');
-                                                if (!dailyTotal.includes(editedString)) {
-                                                    dailyTotal.push(editedString)
-                                                }
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-
-                        // the if statement below is to make sure that days of the month not recorded in the attendance
-                        // are not shown in the table
-                        if (listOfDayOfMonth.includes(num.toString())) {
-                            if (string !== 'Daily-Total') {
-                                table += `<td class='${dayOfWeek} ${string}'>` + counter + '</td>'
-                            }
-                            else if (string == 'Daily-Total') {
-                                table += `<td class='${dayOfWeek} ${string}'>` + dailyTotal.length + '</td>'
-                            }
-                        }
-                    });
-
-                    if (listOfDayOfMonth.includes(num.toString())) {
-                        table += '</tr>'
-                    }
-                }
-            }
-
-            table += '</table>'
-
-            attendanceTotalDiv.insertAdjacentHTML("beforeend", table)
-
-            // to clear the parent div before adding the child element
-            parentDiv.innerHTML = ''
-
-            parentDiv.append(attendanceTotalDiv)
-
-            eventList = stringList
-
-            // the showGraphButton will be used to display the averages and graph of the data
-            const showGraphButton = document.createElement('p')
-            showGraphButton.setAttribute('class', 'showGraphButton')
-            showGraphButton.textContent = 'show average'
-            parentDiv.append(showGraphButton)
-
-            getEventsAverageList(showGraphButton)
-        })
-        .catch(function (error) {
-            console.log('There was a problem: ', error.message)
-        })
-}
-
-let eventList = [];
-let eventsAverageList;
-
-let dataSet;
-
-function getEventsAverageList(eventTriggerButton) {
-    dataSet = [['Class', `Average no of participants in ${select.value}`]];
-
-    eventTriggerButton.addEventListener('click', () => {
-
-        eventsAverageList = []
-        eventList.forEach(element => {
-            let total = 0
-            const nodes = document.querySelectorAll(`.${element}`)
-            nodesEdited = Array.from(nodes).filter(node => parseInt(node.textContent) > 0)
-
-            nodesEdited.forEach(element => {
-                total += parseInt(element.textContent)
-            });
-            let average = total / nodesEdited.length
-            eventsAverageList.push(average)
-        })
-
-        // organising the data in the eventList and the eventsAverageList into the 
-        // dataSet list
-
-        if (dataSet.length == 1) {
-            for (let index = 0; index < eventList.length; index++) {
-                const element = [`${eventList[index]}`, parseInt(eventsAverageList[index])]
-                dataSet.push(element)
-            }
-        }
-
-        if (!averageTableExists) {
-            addAverageTable(dataSet, analyticsDiv)
-        }
-
-        google.charts.load('current', { packages: ['corechart'] });
-        google.charts.setOnLoadCallback(drawChart);
-
-    })
-}
-
-// this is the function to draw the google chart in the analytics for the total attendance
-function drawChart() {
-    myChart.style.display = 'block'
-
-    // Set Options
-    const options = {
-        title: `Average no of participants in ${select.value}`
-    };
-
-    // Draw
-    const chart = new google.visualization.BarChart(myChart);
-
-    // this line of code is used to turn the array to a data table
-    const dataTable = google.visualization.arrayToDataTable(dataSet);
-    chart.draw(dataTable, options);
-
-    // dataSet list variable has been populated in the function above
-}
-
-let averageTableExists = false
-
-
-function addAverageTable(dataList, parentDiv) {
-    let averageTable = '<table class="averageTable">'
-
-    // dataSet list variable is declared in the local scope
-    dataList.forEach(element => {
-        averageTable += '<tr><td>' + element[0] + '</td><td>' + element[1] + '</td></tr>'
-    });
-
-    averageTable += '</table>'
-    parentDiv.insertAdjacentHTML('beforeend', averageTable)
-
-    averageTableExists = true
-}
 
 // attendance by ward lines of code
 

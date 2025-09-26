@@ -1,6 +1,7 @@
 {
   "name": "attendance-software",
   "version": "1.0.0",
+  "type": "module",
   "description": "software to track gathering place attendance",
   "main": "server.js",
   "scripts": {

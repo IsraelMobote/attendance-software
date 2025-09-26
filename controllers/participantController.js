@@ -125,7 +125,7 @@ async function getNames(req, res) {
 * *************************************** */
 async function submitAttendance(req, res) {
     console.log(5)
-    const { par_event, att_list } = req.body
+    const { att_event, att_list } = req.body
 
     const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
         'november', 'december'
@@ -139,8 +139,8 @@ async function submitAttendance(req, res) {
     const att_day = date.getDay()
     const att_dayofmonth = date.getDate()
 
-    console.log(par_event)
-    const submResult = await participantModel.submitAttendance(par_event, att_day, att_dayofmonth, att_month, att_year, att_list)
+    console.log(att_event)
+    const submResult = await participantModel.submitAttendance(att_event, att_day, att_dayofmonth, att_month, att_year, att_list)
 
     // you can log submResult to know of possible errors
     console.log(submResult)
@@ -148,7 +148,7 @@ async function submitAttendance(req, res) {
     if (submResult) {
         req.flash(
             "notice",
-            `Congratulations, you have submitted ${par_event} attendance for ${att_dayofmonth} ${att_month} ${att_year}.`
+            `Congratulations, you have submitted ${att_event} attendance for ${att_dayofmonth} ${att_month} ${att_year}.`
         )
         res.redirect('/')
     } else {
