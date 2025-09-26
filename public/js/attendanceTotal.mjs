@@ -1,3 +1,4 @@
+// this file contains the code for showing the attendance total in the analytics section
 
 const select = document.querySelector('.selectMonth')
 
@@ -6,7 +7,6 @@ const printButton = document.querySelector('#print');
 printButton.style.display = 'none'
 
 const fieldset = document.querySelector('.fieldset')
-fieldset.style.display = 'none'
 
 const myChart = document.querySelector('#myChart')
 
@@ -48,7 +48,6 @@ function getAttendanceTotal(url, attendanceTotalDiv, parentDiv, selectElement) {
     fetch(url)
         .then(function (response) {
             if (response.ok) {
-                console.log(5)
                 return response.json();
             }
             throw Error("Network response was not OK");

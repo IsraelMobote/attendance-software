@@ -438,16 +438,16 @@ const analyticsSelect = document.querySelector('#analyticsSelect')
 const analyticsDiv = document.querySelector('#analyticsDiv')
 const studentMonthlyAttendance = document.querySelector('#studentMonthlyAttendance')
 
-const select = document.querySelector('.selectMonth')
+const selectMonth = document.querySelector('.selectMonth')
 
 analyticsSelect.addEventListener('input', () => {
 
-    select.innerHTML = ''
+    selectMonth.innerHTML = ''
     const optionDisabled = document.createElement('option')
     optionDisabled.textContent = 'select month'
     optionDisabled.disabled = true
     optionDisabled.selected = true
-    select.append(optionDisabled)
+    selectMonth.append(optionDisabled)
 
     //line of code to hide the print button
     printButton.style.display = 'none'
@@ -477,42 +477,33 @@ analyticsSelect.addEventListener('input', () => {
 
 // attendance by ward lines of code
 
+const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
+    'october', 'november', 'december']
+
+const fieldset = document.querySelector('.fieldset')
+fieldset.style.display = 'none'
+
 let attendanceByWardDiv = document.querySelector('#attendanceByWard');
-function showAttendanceByWard() {
+async function showAttendanceByWard() {
 
     fieldset.style.display = 'grid'
-
-    const optionDisabled = document.createElement('option')
-    optionDisabled.textContent = 'select month'
-    optionDisabled.disabled = true
-    select.append(optionDisabled)
+    selectMonth.insertAdjacentHTML("beforeend", `<option disabled>select month</option>`)
 
     months.forEach(element => {
-        const option = document.createElement('option')
-        option.textContent = element
-        option.value = element
-        select.append(option)
+        selectMonth.insertAdjacentHTML("beforeend", `<option value=${element}>${element}</option>`)
     });
 
-    select.addEventListener('input', () => {
+    selectMonth.addEventListener('input', () => {
         // this line of code is to show the print button
         printButton.style.display = 'block'
 
         attendanceByWardDiv.innerHTML = ''
 
         selectWard = document.createElement('select')
-        const disabledOption = document.createElement('option')
-        disabledOption.textContent = 'select ward'
-        disabledOption.disabled = true
-        disabledOption.selected = true
-
-        selectWard.append(disabledOption)
+        selectWard.insertAdjacentHTML("beforeend", `<option disabled selected>select ward</option>`)
 
         wards.forEach(ward => {
-            const option = document.createElement('option')
-            option.textContent = ward
-            option.value = ward
-            selectWard.append(option)
+            selectWard.insertAdjacentHTML("beforeend", `<option value=${ward}>${ward}</option>`)
         });
 
         const p = document.createElement('p')
@@ -527,53 +518,24 @@ function showAttendanceByWard() {
                     wardTableExists = false
                 }
             }
-        })
 
-        let attendanceByWardTable = document.createElement('table')
-        attendanceByWardTable.setAttribute('id', 'attendanceByWardTable')
-        attendanceByWardTable.style.display = 'none'
 
-        p.addEventListener('click', () => {
-            const url = `/participant/getParNameByWard/${selectWard.value}`
-            getParticipantsByWard(url, selectWard, select)
-        })
-        attendanceByWardDiv.append(selectWard)
-        attendanceByWardDiv.append(p)
-        attendanceByWardDiv.append(attendanceByWardTable)
-    })
-}
+            let attendanceByWardTable = document.createElement('table')
+            attendanceByWardTable.setAttribute('id', 'attendanceByWardTable')
+            attendanceByWardTable.style.display = 'none'
 
-let wardData
-function getParticipantsByWard(url, selectElement, selectMonth) {
-    let dataList = []
-
-    wardData = [[`Participant in ${selectElement.value}`, `No of days attended in ${selectMonth.value}`]]
-    fetch(`/participant/getAttendanceData/${select.value}`)
-        .then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
-            throw Error("Network response was not OK");
-        })
-        .then(function (data) {
-            data.forEach(element => {
-                element.rows.forEach(item => {
-                    dataList.push(item)
-                });
-            })
-            console.log(dataList)
-            fetch(url)
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw Error("Network response was not OK");
-                })
-                .then(function (data) {
+            async function random() {
+                const data = await getParticipantsByWard(selectWard.value)
+                console.log(data)
+                const attendanceData = await getAttendanceDataByMonth(selectMonth.value)
+                console.log(attendanceData)
+                p.addEventListener('click', () => {
 
                     const attendanceByWardTable = document.querySelector('#attendanceByWardTable')
                     attendanceByWardTable.style.display = 'block'
                     attendanceByWardTable.innerHTML = ''
+
+                    wardData = [[`Participant in ${selectElement.value}`, `No of days attended in ${selectMonth.value}`]]
 
                     data.forEach(string => {
                         let counter = 0;
@@ -582,20 +544,18 @@ function getParticipantsByWard(url, selectElement, selectMonth) {
                         for (let num = 1; num < 32; num++) {
 
                             attendedDay = 0
-                            dataList.forEach(dataItem => {
+                            attendanceData.forEach(dataItem => {
 
                                 if (dataItem.att_dayofmonth == num) {
 
                                     const list = dataItem.att_list.split(',')
                                     list.forEach(item => {
-                                        console.log(string.par_name)
-                                        if (item.includes(`${string.par_name}-`)) {
+                                        if (item == string.par_name) {
                                             attendedDay = 1
                                         }
                                     });
                                 }
                             })
-
                             if (attendedDay == 1) {
                                 counter += 1
                             }
@@ -616,7 +576,46 @@ function getParticipantsByWard(url, selectElement, selectMonth) {
 
                     google.charts.load('current', { packages: ['corechart'] });
                     google.charts.setOnLoadCallback(drawWardChart);
+
+                    attendanceByWardDiv.append(attendanceByWardTable)
                 })
+            }
+
+            random()
+        })
+
+
+        attendanceByWardDiv.append(selectWard)
+        attendanceByWardDiv.append(p)
+
+    })
+}
+
+let wardData
+
+function getAttendanceDataByMonth(month) {
+    fetch(`/participant/getAttendanceData/${month}`)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw Error("Network response was not OK");
+        })
+        .then(function (data) {
+            return data
+        })
+}
+
+function getParticipantsByWard(ward) {
+    fetch(`/participant/getParNameByWard/${ward}`)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw Error("Network response was not OK");
+        })
+        .then(function (data) {
+            return data
         })
 }
 
