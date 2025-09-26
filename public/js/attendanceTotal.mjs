@@ -200,7 +200,7 @@ function getEventsAverageList(eventTriggerButton) {
         eventList.forEach(element => {
             let total = 0
             const nodes = document.querySelectorAll(`.${element}`)
-            nodesEdited = Array.from(nodes).filter(node => parseInt(node.textContent) > 0)
+            let nodesEdited = Array.from(nodes).filter(node => parseInt(node.textContent) > 0)
 
             nodesEdited.forEach(element => {
                 total += parseInt(element.textContent)
